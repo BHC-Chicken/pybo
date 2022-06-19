@@ -1,5 +1,17 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
+
+
+class Category(models.Model):
+    boardCode = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.boardCode
+
+    def get_absolute_url(self):
+        return reverse('pybo:index', args=[self.boardCode])
 
 
 class Question(models.Model):
@@ -10,6 +22,7 @@ class Question(models.Model):
     modify_date = models.DateTimeField(null=True, blank=True)
     voter = models.ManyToManyField(User, related_name='voter_question')
     view_count = models.IntegerField(null=False, blank=True, default=0)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_question')
 
     def __str__(self):
         return self.subject
